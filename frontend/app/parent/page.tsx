@@ -9,32 +9,27 @@ export default function ParentPortalPage() {
   const [loading, setLoading] = useState(false);
 
   async function lookup(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+    e.preventDefault(); setLoading(true); setError('');
     const res = await api.getParentView(code.trim());
     setLoading(false);
-    if (res.ok) {
-      setData(res.student);
-    } else {
-      setError('الكود غير صحيح، تأكد من كود ابنك/ابنتك');
-    }
+    if (res.ok) setData(res.student);
+    else setError('الكود غير صحيح، تأكد من كود ابنك/ابنتك');
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 480 }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{ fontSize: 48, marginBottom: 8 }}>🎓</div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1e1b4b' }}>بوابة ولي الأمر</h1>
-          <p style={{ color: '#6b7280', marginTop: 8 }}>أدخل كود الطالب لمتابعة بياناته</p>
+          <h1 style={{ fontSize: 'clamp(20px, 5vw, 24px)', fontWeight: 700, color: '#1e1b4b' }}>بوابة ولي الأمر</h1>
+          <p style={{ color: '#6b7280', marginTop: 8, fontSize: 14 }}>أدخل كود الطالب لمتابعة بياناته</p>
         </div>
 
         {!data ? (
           <div className="card">
             <form onSubmit={lookup}>
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontWeight: 600 }}>كود الطالب</label>
+              <div className="form-group">
+                <label>كود الطالب</label>
                 <input
                   className="input"
                   value={code}
@@ -57,21 +52,19 @@ export default function ParentPortalPage() {
               <h2 style={{ fontSize: 20, fontWeight: 700 }}>{data.fullName}</h2>
               <span className="badge badge-blue">{data.code}</span>
             </div>
-            <div style={{ display: 'grid', gap: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
-                <span style={{ color: '#6b7280' }}>المجموعة</span>
-                <span style={{ fontWeight: 600 }}>{data.groupName || 'غير محدد'}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
-                <span style={{ color: '#6b7280' }}>رقم ولي الأمر</span>
-                <span style={{ fontWeight: 600 }}>{data.guardianPhone || 'غير مسجل'}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0' }}>
-                <span style={{ color: '#6b7280' }}>تاريخ التسجيل</span>
-                <span style={{ fontWeight: 600 }}>{new Date(data.createdAt).toLocaleDateString('ar-EG')}</span>
-              </div>
+            <div style={{ display: 'grid', gap: 4 }}>
+              {[
+                { label: 'المجموعة', value: data.groupName || 'غير محدد' },
+                { label: 'رقم ولي الأمر', value: data.guardianPhone || 'غير مسجل' },
+                { label: 'تاريخ التسجيل', value: new Date(data.createdAt).toLocaleDateString('ar-EG') },
+              ].map(item => (
+                <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
+                  <span style={{ color: '#6b7280' }}>{item.label}</span>
+                  <span style={{ fontWeight: 600 }}>{item.value}</span>
+                </div>
+              ))}
             </div>
-            <button className="btn" style={{ width: '100%', marginTop: 16 }} onClick={() => { setData(null); setCode(''); }}>
+            <button className="btn btn-ghost" style={{ width: '100%', marginTop: 16 }} onClick={() => { setData(null); setCode(''); }}>
               بحث عن طالب آخر
             </button>
           </div>

@@ -38,11 +38,8 @@ export default function ExamsPage() {
       setShowModal(false);
       setForm({ title: '', subject: '', scheduledAt: '' });
       load();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   }
 
   async function handleSubmitResult(e: React.FormEvent) {
@@ -68,34 +65,34 @@ export default function ExamsPage() {
     <div>
       <div className="page-header">
         <h1>الامتحانات ({exams.length})</h1>
-        <button className="btn-primary" onClick={() => setShowModal(true)}>+ إضافة امتحان</button>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ إضافة امتحان</button>
       </div>
 
       <div className="card">
-        {exams.length === 0 ? (
-          <p style={{ color: '#9ca3af', textAlign: 'center', padding: 32 }}>لا توجد امتحانات</p>
-        ) : (
-          <table>
-            <thead>
-              <tr><th>العنوان</th><th>المادة</th><th>الموعد</th><th>تاريخ الإنشاء</th><th>إجراءات</th></tr>
-            </thead>
-            <tbody>
-              {exams.map((e: any) => (
-                <tr key={e.id}>
-                  <td style={{ fontWeight: 600 }}>{e.title}</td>
-                  <td>{e.subject || '-'}</td>
-                  <td>{e.scheduledAt ? new Date(e.scheduledAt).toLocaleDateString('ar-EG') : '-'}</td>
-                  <td>{new Date(e.createdAt).toLocaleDateString('ar-EG')}</td>
-                  <td>
-                    <button className="btn-ghost" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => openResults(e)}>
-                      النتائج
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <div className="table-wrap">
+          {exams.length === 0 ? (
+            <p style={{ color: '#9ca3af', textAlign: 'center', padding: 32 }}>لا توجد امتحانات</p>
+          ) : (
+            <table>
+              <thead>
+                <tr><th>العنوان</th><th>المادة</th><th>الموعد</th><th>تاريخ الإنشاء</th><th>إجراءات</th></tr>
+              </thead>
+              <tbody>
+                {exams.map((e: any) => (
+                  <tr key={e.id}>
+                    <td style={{ fontWeight: 600 }}>{e.title}</td>
+                    <td>{e.subject || '-'}</td>
+                    <td>{e.scheduledAt ? new Date(e.scheduledAt).toLocaleDateString('ar-EG') : '-'}</td>
+                    <td>{new Date(e.createdAt).toLocaleDateString('ar-EG')}</td>
+                    <td>
+                      <button className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => openResults(e)}>النتائج</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
 
       {showModal && (
@@ -104,23 +101,12 @@ export default function ExamsPage() {
             <h2>إضافة امتحان جديد</h2>
             {error && <div className="alert alert-error">{error}</div>}
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>عنوان الامتحان *</label>
-                <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
-              </div>
-              <div className="form-group">
-                <label>المادة</label>
-                <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>موعد الامتحان</label>
-                <input type="datetime-local" value={form.scheduledAt} onChange={e => setForm({ ...form, scheduledAt: e.target.value })} />
-              </div>
+              <div className="form-group"><label>عنوان الامتحان *</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
+              <div className="form-group"><label>المادة</label><input className="input" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></div>
+              <div className="form-group"><label>موعد الامتحان</label><input className="input" type="datetime-local" value={form.scheduledAt} onChange={e => setForm({ ...form, scheduledAt: e.target.value })} /></div>
               <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-                <button type="submit" className="btn-primary" disabled={loading} style={{ flex: 1 }}>
-                  {loading ? 'جاري الحفظ...' : 'حفظ'}
-                </button>
-                <button type="button" className="btn-ghost" onClick={() => setShowModal(false)} style={{ flex: 1 }}>إلغاء</button>
+                <button type="submit" className="btn btn-primary" disabled={loading} style={{ flex: 1 }}>{loading ? 'جاري الحفظ...' : 'حفظ'}</button>
+                <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)} style={{ flex: 1 }}>إلغاء</button>
               </div>
             </form>
           </div>
@@ -131,31 +117,33 @@ export default function ExamsPage() {
         <div className="modal-overlay" onClick={() => setShowResultModal(false)}>
           <div className="modal" style={{ maxWidth: 600 }} onClick={e => e.stopPropagation()}>
             <h2>نتائج: {selectedExam.title}</h2>
-            <form onSubmit={handleSubmitResult} style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              <select value={resultForm.studentId} onChange={e => setResultForm({ ...resultForm, studentId: e.target.value })} required style={{ flex: 2 }}>
+            <form onSubmit={handleSubmitResult} style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+              <select className="input" value={resultForm.studentId} onChange={e => setResultForm({ ...resultForm, studentId: e.target.value })} required style={{ flex: 2, minWidth: 140 }}>
                 <option value="">اختر طالب</option>
                 {students.map((s: any) => <option key={s.id} value={s.id}>{s.fullName}</option>)}
               </select>
-              <input type="number" min="0" max="100" placeholder="الدرجة" value={resultForm.score} onChange={e => setResultForm({ ...resultForm, score: e.target.value })} required style={{ flex: 1 }} />
-              <button type="submit" className="btn-primary" disabled={loading} style={{ whiteSpace: 'nowrap' }}>إضافة</button>
+              <input className="input" type="number" min="0" max="100" placeholder="الدرجة" value={resultForm.score} onChange={e => setResultForm({ ...resultForm, score: e.target.value })} required style={{ flex: 1, minWidth: 80 }} />
+              <button type="submit" className="btn btn-primary" disabled={loading}>إضافة</button>
             </form>
-            {results.length === 0 ? (
-              <p style={{ color: '#9ca3af', textAlign: 'center' }}>لا توجد نتائج بعد</p>
-            ) : (
-              <table>
-                <thead><tr><th>الطالب</th><th>الدرجة</th><th>التقدير</th></tr></thead>
-                <tbody>
-                  {results.map((r: any) => (
-                    <tr key={r.id}>
-                      <td>{r.student?.fullName || '-'}</td>
-                      <td style={{ fontWeight: 700 }}>{r.score}</td>
-                      <td><span className={`badge ${gradeColor(r.grade)}`}>{r.grade}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-            <button className="btn-ghost" style={{ marginTop: 16, width: '100%' }} onClick={() => setShowResultModal(false)}>إغلاق</button>
+            <div className="table-wrap">
+              {results.length === 0 ? (
+                <p style={{ color: '#9ca3af', textAlign: 'center' }}>لا توجد نتائج بعد</p>
+              ) : (
+                <table>
+                  <thead><tr><th>الطالب</th><th>الدرجة</th><th>التقدير</th></tr></thead>
+                  <tbody>
+                    {results.map((r: any) => (
+                      <tr key={r.id}>
+                        <td>{r.student?.fullName || '-'}</td>
+                        <td style={{ fontWeight: 700 }}>{r.score}</td>
+                        <td><span className={`badge ${gradeColor(r.grade)}`}>{r.grade}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <button className="btn btn-ghost" style={{ marginTop: 16, width: '100%' }} onClick={() => setShowResultModal(false)}>إغلاق</button>
           </div>
         </div>
       )}

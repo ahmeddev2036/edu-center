@@ -29,42 +29,41 @@ export default function SchedulePage() {
     load();
   }
 
-  const byDay = DAYS.map(day => ({
-    day,
-    items: schedules.filter(s => s.dayOfWeek === day),
-  }));
+  const byDay = DAYS.map(day => ({ day, items: schedules.filter(s => s.dayOfWeek === day) }));
 
   return (
     <div>
       <div className="page-header">
         <h1>جدول الحصص</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(true)}>+ إضافة حصة</button>
+        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'إلغاء' : '+ إضافة حصة'}
+        </button>
       </div>
 
       {showForm && (
         <div className="card" style={{ marginBottom: 24 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>حصة جديدة</h2>
-          <form onSubmit={submit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div><label>العنوان</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
-            <div><label>المجموعة</label><input className="input" value={form.groupName} onChange={e => setForm({ ...form, groupName: e.target.value })} required /></div>
-            <div><label>المدرس</label><input className="input" value={form.teacherName} onChange={e => setForm({ ...form, teacherName: e.target.value })} required /></div>
-            <div><label>اليوم</label>
-              <select className="input" value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}>
-                {DAYS.map(d => <option key={d}>{d}</option>)}
-              </select>
+          <form onSubmit={submit}>
+            <div className="form-grid-2">
+              <div className="form-group"><label>العنوان</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
+              <div className="form-group"><label>المجموعة</label><input className="input" value={form.groupName} onChange={e => setForm({ ...form, groupName: e.target.value })} required /></div>
+              <div className="form-group"><label>المدرس</label><input className="input" value={form.teacherName} onChange={e => setForm({ ...form, teacherName: e.target.value })} required /></div>
+              <div className="form-group">
+                <label>اليوم</label>
+                <select className="input" value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}>
+                  {DAYS.map(d => <option key={d}>{d}</option>)}
+                </select>
+              </div>
+              <div className="form-group"><label>من</label><input className="input" type="time" value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} /></div>
+              <div className="form-group"><label>إلى</label><input className="input" type="time" value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} /></div>
+              <div className="form-group"><label>القاعة</label><input className="input" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })} /></div>
             </div>
-            <div><label>من</label><input className="input" type="time" value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} /></div>
-            <div><label>إلى</label><input className="input" type="time" value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} /></div>
-            <div><label>القاعة</label><input className="input" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })} /></div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-              <button className="btn btn-primary" type="submit" disabled={loading}>{loading ? '...' : 'حفظ'}</button>
-              <button className="btn" type="button" onClick={() => setShowForm(false)}>إلغاء</button>
-            </div>
+            <button className="btn btn-primary" type="submit" disabled={loading}>{loading ? 'جاري الحفظ...' : 'حفظ'}</button>
           </form>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
         {byDay.filter(d => d.items.length > 0).map(({ day, items }) => (
           <div key={day} className="card">
             <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12, color: '#4f46e5' }}>{day}</h3>
@@ -73,15 +72,15 @@ export default function SchedulePage() {
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{s.title}</div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>{s.groupName} — {s.teacherName}</div>
-                  <div style={{ fontSize: 12, color: '#9ca3af' }}>{s.startTime} - {s.endTime} {s.room ? `| ${s.room}` : ''}</div>
+                  <div style={{ fontSize: 12, color: '#9ca3af' }}>{s.startTime} - {s.endTime}{s.room ? ` | ${s.room}` : ''}</div>
                 </div>
-                <button onClick={() => del(s.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 16 }}>🗑</button>
+                <button onClick={() => del(s.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 16, padding: 4 }}>🗑</button>
               </div>
             ))}
           </div>
         ))}
         {schedules.length === 0 && (
-          <div className="card" style={{ gridColumn: '1/-1', textAlign: 'center', color: '#9ca3af' }}>
+          <div className="card" style={{ gridColumn: '1/-1', textAlign: 'center', color: '#9ca3af', padding: 32 }}>
             لا توجد حصص بعد — أضف أول حصة
           </div>
         )}

@@ -38,14 +38,13 @@ export default function AiPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>🤖 مساعد الذكاء الاصطناعي</h1>
+        <h1>مساعد الذكاء الاصطناعي</h1>
       </div>
 
-      {/* Smart Report */}
       {smartReport && (
         <div className="card" style={{ marginBottom: 24, borderRight: '4px solid #4f46e5' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>📊 التقرير الذكي الشامل</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 16 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>التقرير الذكي الشامل</h2>
+          <div className="stats-grid" style={{ marginBottom: 16 }}>
             {[
               { label: 'إجمالي الطلاب', value: smartReport.summary?.totalStudents },
               { label: 'نسبة الحضور', value: `${smartReport.summary?.overallAttendanceRate}%` },
@@ -68,10 +67,9 @@ export default function AiPage() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* تحليل الطالب */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>🎯 تحليل أداء الطالب</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>تحليل أداء الطالب</h2>
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             <select className="input" value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)} style={{ flex: 1 }}>
               <option value="">اختر طالباً...</option>
@@ -84,17 +82,17 @@ export default function AiPage() {
 
           {analysis?.analysis && (
             <div>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-                <div style={{ flex: 1, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: '#4f46e5' }}>{analysis.analysis.attendanceRate}%</div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 80, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#4f46e5' }}>{analysis.analysis.attendanceRate}%</div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>نسبة الحضور</div>
                 </div>
-                <div style={{ flex: 1, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: '#7c3aed' }}>{analysis.analysis.avgScore}</div>
+                <div style={{ flex: 1, minWidth: 80, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#7c3aed' }}>{analysis.analysis.avgScore}</div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>متوسط الدرجات</div>
                 </div>
-                <div style={{ flex: 1, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: riskColors[analysis.analysis.riskLevel] }}>
+                <div style={{ flex: 1, minWidth: 80, textAlign: 'center', padding: 12, background: '#f8fafc', borderRadius: 8 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: riskColors[analysis.analysis.riskLevel] }}>
                     {riskLabels[analysis.analysis.riskLevel]}
                   </div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>مستوى الخطر</div>
@@ -110,27 +108,26 @@ export default function AiPage() {
           )}
         </div>
 
-        {/* توليد أسئلة */}
         <div className="card">
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>✨ توليد أسئلة امتحان</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>توليد أسئلة امتحان</h2>
           <form onSubmit={generateQuestions} style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 4 }}>المادة</label>
+            <div className="form-group">
+              <label>المادة</label>
               <select className="input" value={genForm.subject} onChange={e => setGenForm({ ...genForm, subject: e.target.value })}>
                 {['رياضيات', 'علوم', 'عربي', 'إنجليزي', 'تاريخ', 'جغرافيا'].map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 4 }}>المستوى</label>
+            <div className="form-group">
+              <label>المستوى</label>
               <select className="input" value={genForm.level} onChange={e => setGenForm({ ...genForm, level: e.target.value })}>
                 {['سهل', 'متوسط', 'صعب'].map(l => <option key={l}>{l}</option>)}
               </select>
             </div>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 4 }}>عدد الأسئلة</label>
+            <div className="form-group">
+              <label>عدد الأسئلة</label>
               <input className="input" type="number" min={1} max={20} value={genForm.count} onChange={e => setGenForm({ ...genForm, count: +e.target.value })} />
             </div>
-            <button className="btn btn-primary" type="submit" disabled={loading.gen}>{loading.gen ? '...' : '✨ توليد'}</button>
+            <button className="btn btn-primary" type="submit" disabled={loading.gen}>{loading.gen ? 'جاري التوليد...' : 'توليد'}</button>
           </form>
 
           {generatedQuestions && (

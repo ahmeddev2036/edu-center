@@ -12,15 +12,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [router]);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="dashboard-wrap">
       <Sidebar />
-      <main style={{
-        flex: 1,
-        marginRight: 240,
-        padding: '32px',
-        minHeight: '100vh',
-        background: '#f0f2f5',
-      }}>
+      <main className="dashboard-main">
         {children}
       </main>
     </div>

@@ -10,10 +10,7 @@ export default function ReportsPage() {
   const [fullReport, setFullReport] = useState<any>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
-  useEffect(() => {
-    api.getAttendanceReport(attendanceDate).then(setAttendanceReport).catch(() => {});
-  }, [attendanceDate]);
-
+  useEffect(() => { api.getAttendanceReport(attendanceDate).then(setAttendanceReport).catch(() => {}); }, [attendanceDate]);
   useEffect(() => {
     api.getFinanceReport(financeMonth).then(setFinanceReport).catch(() => {});
     api.getFullReport(financeMonth).then(setFullReport).catch(() => {});
@@ -24,12 +21,9 @@ export default function ReportsPage() {
   function printReport() {
     if (!fullReport) return;
     setPdfLoading(true);
-    const content = `
-      <html dir="rtl">
-      <head><meta charset="utf-8"><title>تقرير شهر ${fullReport.month}</title>
+    const content = `<html dir="rtl"><head><meta charset="utf-8"><title>تقرير</title>
       <style>body{font-family:Arial,sans-serif;padding:40px;direction:rtl}h1{color:#1e1b4b}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px;text-align:right}.total{font-size:24px;font-weight:bold;color:#059669}</style>
-      </head>
-      <body>
+      </head><body>
         <h1>تقرير شهر ${fullReport.month}</h1>
         <p>تاريخ الإصدار: ${new Date(fullReport.generatedAt).toLocaleString('ar-EG')}</p>
         <hr/>
@@ -42,10 +36,9 @@ export default function ReportsPage() {
         </tbody></table>
         <h2>حضور اليوم</h2>
         <p>حاضر: ${fullReport.todayAttendance?.present ?? 0} | غائب: ${fullReport.todayAttendance?.absent ?? 0}</p>
-      </body></html>
-    `;
+      </body></html>`;
     const w = window.open('', '_blank');
-    if (w) { w.document.write(content); w.document.close(); w.print(); }
+    if (w) { w.document.open(); w.document.write(content); w.document.close(); w.print(); }
     setPdfLoading(false);
   }
 
@@ -54,15 +47,15 @@ export default function ReportsPage() {
       <div className="page-header">
         <h1>التقارير</h1>
         <button className="btn btn-primary" onClick={printReport} disabled={pdfLoading || !fullReport}>
-          🖨️ طباعة / PDF
+          طباعة / PDF
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700 }}>تقرير الحضور اليومي</h2>
-            <input type="date" value={attendanceDate} onChange={e => setAttendanceDate(e.target.value)} style={{ width: 'auto' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>تقرير الحضور اليومي</h2>
+            <input type="date" className="input" value={attendanceDate} onChange={e => setAttendanceDate(e.target.value)} style={{ width: 'auto' }} />
           </div>
           {attendanceReport ? (
             <div>
@@ -84,9 +77,9 @@ export default function ReportsPage() {
         </div>
 
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700 }}>التقرير المالي الشهري</h2>
-            <input type="month" value={financeMonth} onChange={e => setFinanceMonth(e.target.value)} style={{ width: 'auto' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>التقرير المالي الشهري</h2>
+            <input type="month" className="input" value={financeMonth} onChange={e => setFinanceMonth(e.target.value)} style={{ width: 'auto' }} />
           </div>
           {financeReport ? (
             <div>
@@ -95,28 +88,29 @@ export default function ReportsPage() {
                 <div style={{ fontSize: 13, color: '#1e40af' }}>الإجمالي</div>
               </div>
               {financeReport.totals?.length > 0 && (
-                <table>
-                  <thead><tr><th>الفئة</th><th>الإجمالي</th></tr></thead>
-                  <tbody>
-                    {financeReport.totals.map((r: any) => (
-                      <tr key={r.category}>
-                        <td>{r.category}</td>
-                        <td style={{ fontWeight: 600, color: '#059669' }}>{Number(r.total).toFixed(2)} ج.م</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="table-wrap">
+                  <table>
+                    <thead><tr><th>الفئة</th><th>الإجمالي</th></tr></thead>
+                    <tbody>
+                      {financeReport.totals.map((r: any) => (
+                        <tr key={r.category}>
+                          <td>{r.category}</td>
+                          <td style={{ fontWeight: 600, color: '#059669' }}>{Number(r.total).toFixed(2)} ج.م</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           ) : <p style={{ color: '#9ca3af', textAlign: 'center' }}>لا توجد بيانات</p>}
         </div>
       </div>
 
-      {/* Full Report Summary */}
       {fullReport && (
         <div className="card" style={{ marginTop: 24 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>ملخص شهر {fullReport.month}</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="stats-grid">
             <div style={{ textAlign: 'center', padding: 16, background: '#f8fafc', borderRadius: 12 }}>
               <div style={{ fontSize: 28, fontWeight: 700, color: '#4f46e5' }}>{fullReport.totalStudents}</div>
               <div style={{ fontSize: 13, color: '#6b7280' }}>إجمالي الطلاب</div>
