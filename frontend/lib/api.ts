@@ -41,6 +41,12 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
+  createUser: (email: string, password: string, role: string) =>
+    request<{ ok: boolean }>('/auth/create-user', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, role }),
+    }),
+
   me: () => request<{ user: any }>('/auth/me'),
 
   // Students

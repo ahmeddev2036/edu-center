@@ -18,7 +18,8 @@ const links = [
   { href: '/dashboard/certificates',   label: 'الشهادات',    icon: '📄' },
   { href: '/dashboard/reports',        label: 'التقارير',    icon: '📊' },
   { href: '/dashboard/notifications',  label: 'الإشعارات',   icon: '🔔' },
-  { href: '/dashboard/settings',       label: 'الإعدادات',   icon: '⚙️' },
+  { href: '/dashboard/settings',       label: 'الإعدادات',        icon: '⚙️' },
+  { href: '/dashboard/users',          label: 'المستخدمون',       icon: '🔑' },
   { href: '/dashboard/ai',             label: 'الذكاء الاصطناعي', icon: '🤖' },
 ];
 
