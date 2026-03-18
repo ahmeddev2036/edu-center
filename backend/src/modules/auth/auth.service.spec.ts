@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../../entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
-const mockRepo = () => ({ findOne: jest.fn() });
+const mockRepo = () => ({ findOne: jest.fn(), create: jest.fn(), save: jest.fn() });
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -24,21 +25,19 @@ describe('AuthService', () => {
     jest.clearAllMocks();
   });
 
-  it('returns error when user not found', async () => {
+  it('throws UnauthorizedException when user not found', async () => {
     userRepo.findOne.mockResolvedValue(null);
-    const res = await service.login('x@x.com', 'pass');
-    expect(res.ok).toBe(false);
+    await expect(service.login('x@x.com', 'pass')).rejects.toThrow(UnauthorizedException);
   });
 
-  it('returns error on wrong password', async () => {
+  it('throws UnauthorizedException on wrong password', async () => {
     userRepo.findOne.mockResolvedValue({ passwordHash: await bcrypt.hash('correct', 10) });
-    const res = await service.login('x@x.com', 'wrong');
-    expect(res.ok).toBe(false);
+    await expect(service.login('x@x.com', 'wrong')).rejects.toThrow(UnauthorizedException);
   });
 
   it('returns token on valid credentials', async () => {
     const hash = await bcrypt.hash('pass123', 10);
-    userRepo.findOne.mockResolvedValue({ id: 'u1', role: 'admin', passwordHash: hash });
+    userRepo.findOne.mockResolvedValue({ id: 'u1', role: 'admin', email: 'x@x.com', passwordHash: hash });
     const res = await service.login('x@x.com', 'pass123');
     expect(res.ok).toBe(true);
     expect((res as any).token).toBe('mock-token');
