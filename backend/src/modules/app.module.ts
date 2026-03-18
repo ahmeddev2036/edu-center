@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { DomainModule } from './domain.module';
 import { HealthModule } from './health/health.module';
@@ -19,6 +20,7 @@ import { CertificatesModule } from './certificates/certificates.module';
       logging: process.env.NODE_ENV === 'development',
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
+    ScheduleModule.forRoot(),
     QueueModule,
     HealthModule,
     DomainModule,

@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { StudentsService } from './students.service';
 import { CreateStudentDto, UpdateStudentDto } from './dto/create-student.dto';
 
@@ -41,5 +42,12 @@ export class StudentsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.students.remove(id);
+  }
+
+  // بوابة ولي الأمر — public (يصل بكود الطالب)
+  @Public()
+  @Get('parent/:code')
+  parentPortal(@Param('code') code: string) {
+    return this.students.getParentView(code);
   }
 }

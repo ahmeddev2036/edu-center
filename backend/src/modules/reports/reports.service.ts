@@ -3,12 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AttendanceRecord } from '../../entities/attendance.entity';
 import { Payment } from '../../entities/payment.entity';
+import { Student } from '../../entities/student.entity';
+import { ExamResult } from '../../entities/exam-result.entity';
 
 @Injectable()
 export class ReportsService {
   constructor(
     @InjectRepository(AttendanceRecord) private readonly attendance: Repository<AttendanceRecord>,
-    @InjectRepository(Payment) private readonly payments: Repository<Payment>
+    @InjectRepository(Payment) private readonly payments: Repository<Payment>,
+    @InjectRepository(Student) private readonly students: Repository<Student>,
+    @InjectRepository(ExamResult) private readonly results: Repository<ExamResult>,
   ) {}
 
   async attendanceDaily(date?: string) {
@@ -36,5 +40,66 @@ export class ReportsService {
       .groupBy('p.category')
       .getRawMany();
     return { month: target, totals: rows };
+  }
+
+  // 2.1 Analytics
+  async getAnalytics() {
+    const totalStudents = await this.students.count();
+    const today = new Date().toISOString().slice(0, 10);
+    const todayAttendance = await this.attendanceDaily(today);
+
+    // آخر 7 أيام حضور
+    const last7 = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().slice(0, 10);
+      const r = await this.attendanceDaily(dateStr);
+      last7.push(r);
+    }
+
+    // إيرادات آخر 6 أشهر
+    const last6Months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthStr = d.toISOString().slice(0, 7);
+      const r = await this.financeMonthly(monthStr);
+      const total = r.totals.reduce((sum: number, t: any) => sum + Number(t.total), 0);
+      last6Months.push({ month: monthStr, total });
+    }
+
+    // متوسط الدرجات
+    const avgResult = await this.results
+      .createQueryBuilder('r')
+      .select('AVG(r.score)', 'avg')
+      .getRawOne();
+
+    return {
+      totalStudents,
+      todayAttendance,
+      attendanceLast7Days: last7,
+      revenueLast6Months: last6Months,
+      averageScore: Number(avgResult?.avg ?? 0).toFixed(1),
+    };
+  }
+
+  // 2.8 تقرير PDF (بيانات للـ frontend يولد PDF)
+  async getFullReport(month?: string) {
+    const target = month ?? new Date().toISOString().slice(0, 7);
+    const finance = await this.financeMonthly(target);
+    const totalRevenue = finance.totals.reduce((s: number, t: any) => s + Number(t.total), 0);
+    const totalStudents = await this.students.count();
+    const today = new Date().toISOString().slice(0, 10);
+    const attendance = await this.attendanceDaily(today);
+
+    return {
+      month: target,
+      totalStudents,
+      totalRevenue,
+      financeBreakdown: finance.totals,
+      todayAttendance: attendance,
+      generatedAt: new Date().toISOString(),
+    };
   }
 }

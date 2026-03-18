@@ -23,4 +23,18 @@ export class ReportsController {
   monthlyFinance(@Query('month') month?: string) {
     return this.reports.financeMonthly(month);
   }
+
+  // 2.1 Analytics
+  @Roles('admin', 'staff')
+  @Get('analytics')
+  analytics() {
+    return this.reports.getAnalytics();
+  }
+
+  // 2.8 Full report for PDF
+  @Roles('admin', 'staff')
+  @Get('full')
+  fullReport(@Query('month') month?: string) {
+    return this.reports.getFullReport(month);
+  }
 }

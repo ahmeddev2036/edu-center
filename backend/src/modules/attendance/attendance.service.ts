@@ -33,4 +33,15 @@ export class AttendanceService {
       relations: ['student'],
     });
   }
+
+  async markByQr(code: string, sessionDate?: string) {
+    const date = sessionDate ?? new Date().toISOString().slice(0, 10);
+    const student = await this.students.findOne({ where: { code } });
+    if (!student) return { ok: false, message: 'الكود غير موجود' };
+    const existing = await this.repo.findOne({ where: { student: { id: student.id }, sessionDate: date } });
+    if (existing) return { ok: true, alreadyMarked: true, student };
+    const record = this.repo.create({ student, sessionDate: date, present: true });
+    await this.repo.save(record);
+    return { ok: true, alreadyMarked: false, student };
+  }
 }

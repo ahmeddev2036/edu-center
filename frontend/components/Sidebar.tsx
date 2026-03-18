@@ -6,14 +6,19 @@ import Link from 'next/link';
 const links = [
   { href: '/dashboard',                label: 'الرئيسية',    icon: '🏠' },
   { href: '/dashboard/students',       label: 'الطلاب',      icon: '👨‍🎓' },
+  { href: '/dashboard/groups',         label: 'المجموعات',   icon: '👥' },
   { href: '/dashboard/attendance',     label: 'الحضور',      icon: '✅' },
+  { href: '/dashboard/qr',             label: 'QR حضور',     icon: '📷' },
+  { href: '/dashboard/schedule',       label: 'جدول الحصص',  icon: '📅' },
   { href: '/dashboard/exams',          label: 'الامتحانات',  icon: '📝' },
   { href: '/dashboard/finance',        label: 'المالية',     icon: '💰' },
-  { href: '/dashboard/staff',          label: 'الموظفون',    icon: '👥' },
+  { href: '/dashboard/staff',          label: 'الموظفون',    icon: '🧑‍💼' },
+  { href: '/dashboard/messages',       label: 'الرسائل',     icon: '💬' },
   { href: '/dashboard/media',          label: 'الفيديوهات',  icon: '🎬' },
   { href: '/dashboard/certificates',   label: 'الشهادات',    icon: '📄' },
   { href: '/dashboard/reports',        label: 'التقارير',    icon: '📊' },
   { href: '/dashboard/notifications',  label: 'الإشعارات',   icon: '🔔' },
+  { href: '/dashboard/settings',       label: 'الإعدادات',   icon: '⚙️' },
 ];
 
 const roleLabel: Record<string, string> = {

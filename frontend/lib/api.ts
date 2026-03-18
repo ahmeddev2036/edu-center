@@ -105,4 +105,42 @@ export const api = {
 
   // Health
   health: () => request<any>('/health'),
+
+  // Groups (2.6)
+  getGroups: () => request<any[]>('/groups'),
+  createGroup: (data: any) => request('/groups', { method: 'POST', body: JSON.stringify(data) }),
+  updateGroup: (id: string, data: any) => request(`/groups/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteGroup: (id: string) => request(`/groups/${id}`, { method: 'DELETE' }),
+
+  // Schedule (2.2)
+  getSchedules: () => request<any[]>('/schedule'),
+  createSchedule: (data: any) => request('/schedule', { method: 'POST', body: JSON.stringify(data) }),
+  updateSchedule: (id: string, data: any) => request(`/schedule/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteSchedule: (id: string) => request(`/schedule/${id}`, { method: 'DELETE' }),
+
+  // Messages (2.7)
+  getMessages: () => request<any[]>('/messages'),
+  sendMessage: (data: any) => request('/messages', { method: 'POST', body: JSON.stringify(data) }),
+  markMessageRead: (id: string) => request(`/messages/${id}/read`, { method: 'PUT' }),
+  deleteMessage: (id: string) => request(`/messages/${id}`, { method: 'DELETE' }),
+
+  // Settings (2.9)
+  getSettings: () => request<any>('/settings'),
+  updateSettings: (data: any) => request('/settings', { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Analytics (2.1)
+  getAnalytics: () => request<any>('/reports/analytics'),
+  getFullReport: (month?: string) => request<any>(`/reports/full${month ? `?month=${month}` : ''}`),
+
+  // QR (2.4) — public
+  qrScan: (code: string, sessionDate?: string) =>
+    fetch(`${BASE}/attendance/qr-scan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, sessionDate }),
+    }).then(r => r.json()),
+
+  // Parent portal (2.5) — public
+  getParentView: (code: string) =>
+    fetch(`${BASE}/students/parent/${code}`).then(r => r.json()),
 };

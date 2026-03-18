@@ -37,4 +37,10 @@ export class StudentsService {
   findByCode(code: string) {
     return this.repo.findOne({ where: { code } });
   }
+
+  async getParentView(code: string) {
+    const student = await this.repo.findOne({ where: { code } });
+    if (!student) return { ok: false, message: 'الكود غير صحيح' };
+    return { ok: true, student };
+  }
 }
