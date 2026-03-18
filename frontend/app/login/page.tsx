@@ -82,6 +82,11 @@ export default function LoginPage() {
             {loading ? 'جاري الدخول...' : 'دخول'}
           </button>
         </form>
+
+        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: '#6b7280' }}>
+          مستخدم جديد؟{' '}
+          <a href="/register" style={{ color: '#4f46e5', fontWeight: 600 }}>إنشاء حساب</a>
+        </p>
       </div>
     </div>
   );
