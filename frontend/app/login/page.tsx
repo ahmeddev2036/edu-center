@@ -19,16 +19,18 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
-      if (data.ok && data.token) {
+      if (!res.ok) {
+        setError(data.message || 'بيانات الدخول غير صحيحة');
+        return;
+      }
+      if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role || 'admin');
         localStorage.setItem('email', data.email || email);
         window.location.href = '/dashboard';
       } else {
-        setError(data.message || 'بيانات الدخول غير صحيحة');
+        setError('حدث خطأ غير متوقع — حاول مرة أخرى');
       }
     } catch {
       setError('تعذر الاتصال بالخادم — تحقق من الاتصال بالإنترنت');
@@ -39,19 +41,11 @@ export default function LoginPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(135deg, #1e1b4b, #312e81)',
-      direction: 'rtl',
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(135deg, #1e1b4b, #312e81)', direction: 'rtl',
     }}>
       <div style={{
-        background: '#fff',
-        borderRadius: 20,
-        padding: '48px 40px',
-        width: '100%',
-        maxWidth: 420,
+        background: '#fff', borderRadius: 20, padding: '48px 40px', width: '100%', maxWidth: 420,
         boxShadow: '0 24px 64px rgba(0,0,0,0.3)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -68,45 +62,22 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: 14, color: '#374151' }}>
-              البريد الإلكتروني
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="admin@edu.com"
-              required
-              style={{ width: '100%', padding: '12px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
-              onFocus={e => e.target.style.borderColor = '#4f46e5'}
-              onBlur={e => e.target.style.borderColor = '#e5e7eb'}
-            />
+            <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: 14, color: '#374151' }}>البريد الإلكتروني</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@edu.com" required
+              style={{ width: '100%', padding: '12px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
+              onFocus={e => e.target.style.borderColor = '#4f46e5'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
           </div>
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: 14, color: '#374151' }}>
-              كلمة المرور
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              style={{ width: '100%', padding: '12px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
-              onFocus={e => e.target.style.borderColor = '#4f46e5'}
-              onBlur={e => e.target.style.borderColor = '#e5e7eb'}
-            />
+            <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: 14, color: '#374151' }}>كلمة المرور</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required
+              style={{ width: '100%', padding: '12px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
+              onFocus={e => e.target.style.borderColor = '#4f46e5'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%', padding: '13px', fontSize: 16, fontWeight: 700,
-              background: loading ? '#a5b4fc' : '#4f46e5', color: '#fff',
-              border: 'none', borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background 0.2s',
-            }}
-          >
+          <button type="submit" disabled={loading} style={{
+            width: '100%', padding: '13px', fontSize: 16, fontWeight: 700,
+            background: loading ? '#a5b4fc' : '#4f46e5', color: '#fff',
+            border: 'none', borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer',
+          }}>
             {loading ? '⏳ جاري الدخول...' : 'دخول →'}
           </button>
         </form>

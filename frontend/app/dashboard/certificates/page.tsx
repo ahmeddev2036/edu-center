@@ -5,7 +5,6 @@ import { api } from '../../../lib/api';
 export default function CertificatesPage() {
   const [students, setStudents] = useState<any[]>([]);
   const [exams, setExams] = useState<any[]>([]);
-  const [results, setResults] = useState<any[]>([]);
   const [form, setForm] = useState({ studentName: '', examTitle: '', score: '', grade: 'ممتاز' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');

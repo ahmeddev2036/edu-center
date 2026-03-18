@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,16 +14,16 @@ export class AuthService {
 
   async login(email: string, password: string) {
     const user = await this.users.findOne({ where: { email } });
-    if (!user) return { ok: false, message: 'بيانات الدخول غير صحيحة' };
+    if (!user) throw new UnauthorizedException('بيانات الدخول غير صحيحة');
     const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) return { ok: false, message: 'بيانات الدخول غير صحيحة' };
+    if (!match) throw new UnauthorizedException('بيانات الدخول غير صحيحة');
     const token = await this.jwt.signAsync({ sub: user.id, role: user.role, email: user.email });
     return { ok: true, token, role: user.role, email: user.email };
   }
 
   async register(email: string, password: string, role = 'admin') {
     const existing = await this.users.findOne({ where: { email } });
-    if (existing) throw new BadRequestException('البريد الإلكتروني مستخدم بالفعل');
+    if (existing) throw new ConflictException('البريد الإلكتروني مستخدم بالفعل');
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await this.users.save(
       this.users.create({ email, passwordHash, role }),

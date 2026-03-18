@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -29,6 +29,14 @@ export class NotificationsController {
   @Post('sms')
   sendSms(@Body() body: SendNotificationDto) {
     return this.notifications.send('sms', body.recipient, body.template, body.payload);
+  }
+
+  // Unified endpoint: POST /notifications/:channel
+  @Roles('admin', 'staff')
+  @Post(':channel')
+  sendByChannel(@Param('channel') channel: string, @Body() body: SendNotificationDto) {
+    const ch = channel as 'whatsapp' | 'email' | 'sms';
+    return this.notifications.send(ch, body.recipient, body.template, body.payload);
   }
 
   @Roles('admin')
