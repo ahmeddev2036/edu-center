@@ -1,0 +1,28 @@
+name: ci
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Backend deps
+        run: cd backend && npm install --legacy-peer-deps
+      - name: Frontend deps
+        run: cd frontend && npm install --legacy-peer-deps
+      - name: Backend lint
+        run: cd backend && npm run lint
+      - name: Backend test
+        run: cd backend && npm test
+      - name: Backend build
+        run: cd backend && npm run build
+      - name: Frontend lint
+        run: cd frontend && npm run lint
+      - name: Frontend build
+        run: cd frontend && npm run build
