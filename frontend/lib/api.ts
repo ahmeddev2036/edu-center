@@ -143,4 +143,22 @@ export const api = {
   // Parent portal (2.5) — public
   getParentView: (code: string) =>
     fetch(`${BASE}/students/parent/${code}`).then(r => r.json()),
+
+  // Tenants (3.1 SaaS)
+  createTenant: (data: any) =>
+    fetch(`${BASE}/tenants`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => r.json()),
+  getAllTenants: () => request<any[]>('/tenants'),
+  getTenant: (id: string) => request<any>(`/tenants/${id}`),
+  updateTenant: (id: string, data: any) => request(`/tenants/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  subscribeTenant: (id: string, plan: string, billingCycle: string) =>
+    request(`/tenants/${id}/subscribe`, { method: 'POST', body: JSON.stringify({ plan, billingCycle }) }),
+
+  // Super Admin (3.5)
+  getSuperAdminDashboard: () => request<any>('/super-admin/dashboard'),
+
+  // AI (4.1, 4.2, 4.3)
+  analyzeStudent: (id: string) => request<any>(`/ai/analyze/student/${id}`),
+  generateExamQuestions: (data: { subject: string; level: string; count: number }) =>
+    request<any>('/ai/generate/questions', { method: 'POST', body: JSON.stringify(data) }),
+  getSmartReport: () => request<any>('/ai/report/smart'),
 };

@@ -15,6 +15,9 @@ import { GroupsModule } from './groups/groups.module';
 import { ScheduleModule as ScheduleDomainModule } from './schedule/schedule.module';
 import { MessagesModule } from './messages/messages.module';
 import { SettingsModule } from './settings/settings.module';
+import { TenantsModule } from './tenants/tenants.module';
+import { SuperAdminModule } from './super-admin/super-admin.module';
+import { AiModule } from './ai/ai.module';
 import { User } from '../entities/user.entity';
 import { Student } from '../entities/student.entity';
 import { AttendanceRecord } from '../entities/attendance.entity';
@@ -29,6 +32,8 @@ import { Group } from '../entities/group.entity';
 import { Schedule } from '../entities/schedule.entity';
 import { Message } from '../entities/message.entity';
 import { Settings } from '../entities/settings.entity';
+import { Tenant } from '../entities/tenant.entity';
+import { Subscription } from '../entities/subscription.entity';
 
 @Module({
   imports: [
@@ -36,6 +41,7 @@ import { Settings } from '../entities/settings.entity';
       User, Student, AttendanceRecord, Payment, Staff, Video,
       Exam, Question, ExamResult, NotificationLog,
       Group, Schedule, Message, Settings,
+      Tenant, Subscription,
     ]),
     UsersModule,
     AuthModule,
@@ -52,6 +58,9 @@ import { Settings } from '../entities/settings.entity';
     ScheduleDomainModule,
     MessagesModule,
     SettingsModule,
+    TenantsModule,
+    SuperAdminModule,
+    AiModule,
   ],
 })
 export class DomainModule {}

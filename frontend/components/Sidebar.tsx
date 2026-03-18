@@ -19,6 +19,7 @@ const links = [
   { href: '/dashboard/reports',        label: 'التقارير',    icon: '📊' },
   { href: '/dashboard/notifications',  label: 'الإشعارات',   icon: '🔔' },
   { href: '/dashboard/settings',       label: 'الإعدادات',   icon: '⚙️' },
+  { href: '/dashboard/ai',             label: 'الذكاء الاصطناعي', icon: '🤖' },
 ];
 
 const roleLabel: Record<string, string> = {
