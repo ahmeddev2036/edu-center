@@ -4,6 +4,24 @@
 
 ---
 
+## 🚀 روابط النشر
+
+| الخدمة | الرابط |
+|--------|--------|
+| Frontend (Vercel) | https://frontend-two-drab-22.vercel.app |
+| Backend API (Railway) | https://backend-production-bdafc.up.railway.app |
+| API Docs (Swagger) | https://backend-production-bdafc.up.railway.app/docs |
+| Health Check | https://backend-production-bdafc.up.railway.app/health |
+| GitHub Repo | https://github.com/ahmeddev2036/edu-center |
+
+## بيانات الدخول الافتراضية
+```
+Email: admin@edu.com
+Password: Admin@123
+```
+
+---
+
 ## المتطلبات
 
 - Node.js >= 20
