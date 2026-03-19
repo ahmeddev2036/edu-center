@@ -1,7 +1,8 @@
 import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 
 export class CreateGroupDto {
-  @IsString()
+  @IsString({ message: 'اسم المجموعة يجب أن يكون نصاً' })
+  @IsNotEmpty({ message: 'اسم المجموعة مطلوب' })
   name!: string;
 
   @IsOptional() @IsString()

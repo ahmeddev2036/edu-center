@@ -52,4 +52,14 @@ export class TenantsController {
   @UseGuards(JwtAuthGuard)
   @Get(':id/subscriptions')
   subscriptions(@Param('id') id: string) { return this.svc.getSubscriptions(id); }
+
+  // Stripe Webhook (public)
+  @Public()
+  @Post('stripe/webhook')
+  async stripeWebhook(@Body() body: any) {
+    if (body?.type === 'payment_intent.succeeded') {
+      await this.svc.confirmPayment(body.data?.object?.id);
+    }
+    return { received: true };
+  }
 }

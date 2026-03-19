@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import OpenAI from 'openai';
 import { Student } from '../../entities/student.entity';
 import { AttendanceRecord } from '../../entities/attendance.entity';
 import { ExamResult } from '../../entities/exam-result.entity';
@@ -8,12 +9,18 @@ import { Payment } from '../../entities/payment.entity';
 
 @Injectable()
 export class AiService {
+  private openai: OpenAI | null = null;
+
   constructor(
     @InjectRepository(Student) private readonly students: Repository<Student>,
     @InjectRepository(AttendanceRecord) private readonly attendance: Repository<AttendanceRecord>,
     @InjectRepository(ExamResult) private readonly results: Repository<ExamResult>,
     @InjectRepository(Payment) private readonly payments: Repository<Payment>,
-  ) {}
+  ) {
+    if (process.env.OPENAI_API_KEY) {
+      this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    }
+  }
 
   // 4.1 تحليل أداء الطالب
   async analyzeStudent(studentId: string) {
@@ -68,9 +75,29 @@ export class AiService {
   }
 
   // 4.2 توليد أسئلة امتحان تلقائياً
-  generateExamQuestions(subject: string, level: string, count: number) {
-    // في الإنتاج: استخدام OpenAI API
-    // هنا: أسئلة نموذجية حسب المادة
+  async generateExamQuestions(subject: string, level: string, count: number) {
+    // إذا كان OpenAI متاحاً، استخدمه
+    if (this.openai) {
+      try {
+        const completion = await this.openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [{
+            role: 'user',
+            content: `اكتب ${count} سؤال اختيار من متعدد بمستوى ${level} في مادة ${subject}. أرجع JSON فقط بهذا الشكل:
+[{"text":"نص السؤال","choices":["أ","ب","ج","د"],"correctAnswer":"الإجابة الصحيحة","type":"mcq"}]`,
+          }],
+          response_format: { type: 'json_object' },
+        });
+        const content = completion.choices[0]?.message?.content ?? '{}';
+        const parsed = JSON.parse(content);
+        const questions = Array.isArray(parsed) ? parsed : (parsed.questions ?? []);
+        return { subject, level, questions, generatedAt: new Date().toISOString(), source: 'openai' };
+      } catch {
+        // fallback to templates
+      }
+    }
+
+    // Fallback: أسئلة نموذجية
     const templates: Record<string, any[]> = {
       رياضيات: [
         { text: 'ما ناتج 15 × 8؟', choices: ['100', '120', '110', '130'], correctAnswer: '120', type: 'mcq' },
@@ -87,26 +114,11 @@ export class AiService {
       ],
     };
 
-    const questions = templates[subject] || templates['رياضيات'];
-    const selected = questions.slice(0, Math.min(count, questions.length));
-
-    // إضافة أسئلة مقالية
-    if (count > selected.length) {
-      selected.push({
-        text: `اشرح بإيجاز أهمية مادة ${subject} في حياتنا اليومية`,
-        type: 'essay',
-        choices: null,
-        correctAnswer: null,
-      });
+    const questions = (templates[subject] ?? templates['رياضيات']).slice(0, count);
+    if (count > questions.length) {
+      questions.push({ text: `اشرح بإيجاز أهمية مادة ${subject} في حياتنا اليومية`, type: 'essay', choices: null, correctAnswer: null });
     }
-
-    return {
-      subject,
-      level,
-      questions: selected,
-      generatedAt: new Date().toISOString(),
-      note: 'تم التوليد تلقائياً — يُنصح بمراجعة الأسئلة قبل الاستخدام',
-    };
+    return { subject, level, questions, generatedAt: new Date().toISOString(), source: 'template', note: 'يُنصح بمراجعة الأسئلة قبل الاستخدام' };
   }
 
   // 4.3 تقرير ذكي شامل

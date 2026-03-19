@@ -29,6 +29,9 @@ export class Subscription {
   @Column({ nullable: true })
   paymentRef?: string;
 
+  @Column({ nullable: true })
+  reference?: string; // Stripe PaymentIntent ID
+
   @CreateDateColumn()
   createdAt!: Date;
 }

@@ -3,15 +3,15 @@ import { IsBoolean, IsDateString, IsOptional, IsString, IsUUID } from 'class-val
 
 export class MarkAttendanceDto {
   @ApiProperty()
-  @IsUUID()
+  @IsUUID('4', { message: 'معرف الطالب غير صحيح' })
   studentId!: string;
 
   @ApiProperty({ example: '2026-03-18' })
-  @IsDateString()
+  @IsDateString({}, { message: 'تاريخ الجلسة غير صحيح' })
   sessionDate!: string;
 
   @ApiProperty({ default: true })
-  @IsBoolean()
+  @IsBoolean({ message: 'قيمة الحضور يجب أن تكون صح أو خطأ' })
   present!: boolean;
 
   @ApiProperty({ required: false })

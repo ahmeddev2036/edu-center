@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Settings } from '../../entities/settings.entity';
 import { SettingsService } from './settings.service';
 import { SettingsController } from './settings.controller';
+import { UploadService } from '../../infra/upload.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Settings])],
-  providers: [SettingsService],
+  providers: [SettingsService, UploadService],
   controllers: [SettingsController],
   exports: [SettingsService],
 })

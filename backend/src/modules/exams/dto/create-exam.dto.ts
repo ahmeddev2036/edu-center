@@ -3,8 +3,8 @@ import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class CreateExamDto {
   @ApiProperty({ example: 'امتحان الفصل الأول' })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'عنوان الامتحان مطلوب' })
+  @IsString({ message: 'يجب أن يكون العنوان نصاً' })
   title!: string;
 
   @ApiProperty({ required: false, example: 'رياضيات' })

@@ -3,12 +3,12 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-v
 
 export class RecordPaymentDto {
   @ApiProperty()
-  @IsUUID()
+  @IsUUID('4', { message: 'معرف الطالب غير صحيح' })
   studentId!: string;
 
   @ApiProperty({ example: 500 })
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: 'المبلغ يجب أن يكون رقماً' })
+  @Min(0, { message: 'المبلغ لا يمكن أن يكون سالباً' })
   amount!: number;
 
   @ApiProperty({ required: false, example: 'tuition' })

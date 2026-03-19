@@ -3,13 +3,13 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateStudentDto {
   @ApiProperty({ example: 'أحمد محمد' })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'الاسم الكامل مطلوب' })
+  @IsString({ message: 'يجب أن يكون الاسم نصاً' })
   fullName!: string;
 
   @ApiProperty({ example: 'STU-001', description: 'باركود / QR فريد' })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'الكود مطلوب' })
+  @IsString({ message: 'يجب أن يكون الكود نصاً' })
   code!: string;
 
   @ApiProperty({ required: false, example: 'المجموعة أ' })

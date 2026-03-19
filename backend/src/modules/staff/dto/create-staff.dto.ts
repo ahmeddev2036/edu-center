@@ -3,13 +3,13 @@ import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-val
 
 export class CreateStaffDto {
   @ApiProperty({ example: 'محمد أحمد' })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'الاسم مطلوب' })
+  @IsString({ message: 'يجب أن يكون الاسم نصاً' })
   name!: string;
 
   @ApiProperty({ enum: ['teacher', 'admin', 'staff'], default: 'teacher' })
   @IsOptional()
-  @IsIn(['teacher', 'admin', 'staff'])
+  @IsIn(['teacher', 'admin', 'staff'], { message: 'الدور غير صحيح' })
   role?: string;
 
   @ApiProperty({ enum: ['per-session', 'percentage', 'fixed'], required: false })

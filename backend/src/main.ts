@@ -1,12 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as helmet from 'helmet';
 import { AppModule } from './modules/app.module';
 import { GlobalExceptionFilter } from './common/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
+
+  // Security headers
+  app.use((helmet as any).default ? (helmet as any).default() : (helmet as any)());
 
   // CORS — يسمح لكل الـ origins في development وللـ Vercel في production
   app.enableCors({
